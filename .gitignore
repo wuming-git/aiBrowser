@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+dist-electron/
+release/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Env
+.env.local
+*.local
+
+# Logs / runtime
+*.log
+Workers/
+.user-data/
+models/
+*.gguf
+*.gguf.downloading

@@ -1,0 +1,85 @@
+{
+  "name": "ai-browser",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI fingerprint browser desktop client (browser168)",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "chcp 65001 >NUL & vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "build:prod": "npm run build && electron-builder --win nsis"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource/newsreader": "^5.3.0",
+    "axios": "^1.7.9",
+    "croner": "^10.0.1",
+    "dompurify": "^3.4.12",
+    "electron-updater": "^6.8.9",
+    "element-plus": "^2.9.1",
+    "ghost-cursor": "^1.4.2",
+    "marked": "^18.0.7",
+    "pinia": "^2.3.0",
+    "proxy-chain": "^2.5.9",
+    "puppeteer-core": "^25.3.0",
+    "uuid": "^14.0.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "ws": "^8.21.1"
+  },
+  "devDependencies": {
+    "@types/dompurify": "^3.0.5",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "electron": "^34.2.0",
+    "electron-builder": "^26.15.3",
+    "sass": "^1.83.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.5",
+    "vite-plugin-electron": "^0.28.8",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "vue-tsc": "^2.2.0"
+  },
+  "build": {
+    "appId": "com.browser168.app",
+    "productName": "browser168",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "icon": "build/icon.png",
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "chrome-extension/**/*",
+      "package.json"
+    ],
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://browser168.com/releases"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "browser168"
+    }
+  }
+}
