@@ -1,56 +1,74 @@
-# aiBrowser
+# browser168（别名 AIBrowser）
 
-AI 指纹浏览器桌面客户端（Electron + Vue3）。
+免费的 AI 指纹浏览器与自动化 Agent 桌面端。
 
-## 运行
+用自然语言下达任务，Agent 驱动真实浏览器完成打开、登录、点击、采集与定时执行——不必写脚本，也不用盯着屏幕逐步操作。
 
-先启动后端 `aiBrowserService`，再：
+## 官网 / 功能说明
+
+软件下载、完整功能说明与使用指引：
+
+**https://browser168.com**
+
+> 产品能力与使用说明以官网为准。
+
+---
+
+## 核心能力
+
+### 免费可用
+
+- 打开即可使用，降低上手成本
+- 平台提供免费模型额度，覆盖日常任务与试用
+- 也可接入自有模型密钥，按需切换
+
+### AI Agent
+
+- 自然语言描述目标，Agent 理解意图并拆解执行
+- 实时观察页面、调用浏览器工具，边做边汇报进展
+- 适合运营采集、账号流程、日报早报等「打开浏览器就能做完」的工作
+
+### 指纹浏览器环境
+
+- 多套独立浏览器环境，互不干扰
+- 支持指纹配置与代理，便于隔离账号与场景
+- 基于本机 Chrome，贴近真实使用体验
+
+### 自动化与定时
+
+- 把重复网页流程交给 Agent 自动完成
+- 定时任务按天 / 工作日 / 周期调度执行
+- 本地桌面常驻运行，任务可随时查看与暂停
+
+### 桌面工作台
+
+- Electron 桌面客户端，侧栏管理环境与定时任务
+- 右侧 Agent 对话区，执行过程可读、结果可回看
+- 支持自动更新，安装包一键升级
+
+---
+
+## 一句话定位
+
+**免费的 AI 指纹浏览器 Agent：把网页上的重复劳动自动化。**
+
+---
+
+## 开发者快速开始
+
+需本机安装 Google Chrome，并先启动后端 `browser-agent`：
 
 ```bash
-cd D:\code\js\aiBrowser
 npm install
 npm run dev
 ```
 
-需本机安装 Google Chrome。扩展目录：项目内 `chrome-extension/`。
+| 命令 | 说明 |
+|------|------|
+| `npm run dev` | 本地开发 |
+| `npm run build` | 构建前端与 Electron 主进程 |
+| `npm run build:prod` | 打 Windows NSIS 安装包（`release/`） |
 
-API 地址见环境变量 `VITE_API_BASE`：
+`VITE_API_BASE`：本地默认 `http://127.0.0.1:8080`，线上打包用 `https://browser168.com`（不要加 `/api`）。
 
-- 本地开发：`.env` / `.env.development` → `http://127.0.0.1:8080`
-- 线上打包：`.env.production` → `https://browser168.com`（不要加 `/api`）
-
-```bash
-# 本地
-npm run dev
-
-# 仅构建渲染进程 + Electron 主进程
-npm run build
-
-# Windows 安装包（NSIS 全量包，产物在 release/）
-npm run build:prod
-```
-
-桌面 Agent 还会连 `wss://域名/ws/desktop`，Nginx 需反代该 WebSocket。
-
-发送消息前会走本地规则敏感词 / 内容安全分（不依赖本地 LLM）。
-
-## 版本与自动更新
-
-- 侧栏品牌区显示当前版本（如 `v0.1.0`），点击可手动检查更新。
-- 已安装的打包客户端启动后会自动检查更新（开发模式跳过）。
-- 更新源默认：`https://browser168.com/releases`（可用环境变量 `UPDATE_FEED_URL` 覆盖）。
-- 更新形态：下载完整 NSIS 安装包后重启安装（全量更新）。
-
-发布新版本：
-
-1. 修改 `package.json` 的 `version`
-2. 执行 `npm run build:prod`
-3. 将 `release/` 中的 `latest.yml`、`browser168-Setup-x.y.z.exe`（及 `.blockmap` 若有）上传到服务器的 `/releases/` 目录，保证可通过：
-   - `https://browser168.com/releases/latest.yml`
-   - `https://browser168.com/releases/browser168-Setup-x.y.z.exe`
-   访问
-
-## 关联项目
-
-- 后端：`D:\code\python\browser-agent`（或旧 `aiBrowserService`）
-- 管理端：`D:\code\js\aiAdminWeb`
+更新源默认：`https://browser168.com/releases`。
