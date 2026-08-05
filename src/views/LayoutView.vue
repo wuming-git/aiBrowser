@@ -31,6 +31,14 @@
           <el-icon class="menu-icon"><Timer /></el-icon>
           <span>定时任务</span>
         </router-link>
+        <router-link to="/skills" class="menu-item" active-class="active">
+          <el-icon class="menu-icon"><Collection /></el-icon>
+          <span>技能</span>
+        </router-link>
+        <router-link to="/tools" class="menu-item" active-class="active">
+          <el-icon class="menu-icon"><SetUp /></el-icon>
+          <span>工具</span>
+        </router-link>
       </nav>
 
       <div class="sidebar-foot">
@@ -125,7 +133,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Monitor, Timer, Setting } from '@element-plus/icons-vue'
+import { Monitor, Timer, Setting, Collection, SetUp } from '@element-plus/icons-vue'
 import { useAuthStore } from '@/stores/auth'
 import AgentPanel from '@/components/AgentPanel.vue'
 import ModelSettingsDialog from '@/components/ModelSettingsDialog.vue'
@@ -250,9 +258,15 @@ function onUpdateEvent(payload: UpdateEventPayload) {
     return
   }
   if (payload.type === 'error') {
+    // 启动自动检查失败时不弹大段堆栈；仅手动检查时提示
+    if (!manualCheck.value) {
+      updatePhase.value = 'idle'
+      return
+    }
     updatePhase.value = 'error'
     updateError.value = payload.message || '更新失败'
     updateBusy.value = false
+    manualCheck.value = false
     return
   }
   if (payload.type === 'dev-skip') {

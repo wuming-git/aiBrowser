@@ -70,7 +70,7 @@ async function onSubmit() {
   loading.value = true
   try {
     const res = await authApi.login({ email: email.value, password: password.value })
-    auth.setSession(res.data.token, res.data.email)
+    auth.setSession(res.data.token, res.data.email, res.data.userId)
     ElMessage.success('登录成功')
     router.push('/profiles')
   } catch (e: any) {

@@ -244,7 +244,7 @@ function hasProcess(turn: ChatTurn) {
   )
 }
 
-/** 执行过程：只展示普通人能看懂的进展与操作结果 */
+/** 执行过程：只展示普通人能看懂的进展与操作结果（同文去重） */
 function processItems(turn: ChatTurn) {
   const items: Array<{
     id: string
@@ -253,10 +253,14 @@ function processItems(turn: ChatTurn) {
     text: string
     meta: string
   }> = []
+  const seenProgress = new Set<string>()
   for (const s of turn.steps) {
     if (s.kind === 'progress') {
       const text = humanizeAgentText(s.content || s.narrative)
       if (!text) continue
+      const key = text.replace(/\s+/g, '')
+      if (seenProgress.has(key)) continue
+      seenProgress.add(key)
       items.push({
         id: s.id,
         kind: 'progress',
@@ -265,8 +269,12 @@ function processItems(turn: ChatTurn) {
         meta: formatTime(s.at)
       })
     } else if (s.kind === 'thinking' && (s.content || '').trim()) {
+      // thinking 常与 progress 同源；已有 progress 展示时跳过，避免双份
       const text = humanizeAgentText(s.content)
       if (!text) continue
+      const key = text.replace(/\s+/g, '')
+      if (seenProgress.has(key)) continue
+      seenProgress.add(key)
       items.push({
         id: s.id,
         kind: 'progress',
@@ -429,6 +437,15 @@ function appendProgress(text: string) {
   if (!turn) return
   const t = String(text || '').trim()
   if (!t) return
+  const norm = humanizeAgentText(t).replace(/\s+/g, '')
+  // 与最近一条进展相同则跳过（避免 progress 事件与 thinking/误入回复 重复）
+  for (let i = turn.steps.length - 1; i >= 0; i--) {
+    const s = turn.steps[i]
+    if (s.kind !== 'progress' && s.kind !== 'thinking') continue
+    const prev = humanizeAgentText(s.content || s.narrative).replace(/\s+/g, '')
+    if (prev && prev === norm) return
+    break
+  }
   openStep(turn, 'progress', {
     content: t,
     narrative: t,
@@ -470,7 +487,14 @@ function pushTool(payload: { phase: 'start' | 'end'; name?: string; detail?: str
     if (premature.length) {
       for (const r of premature) {
         const t = String(r.content || '').trim()
-        openStep(turn, 'progress', { content: t, narrative: t, phase: 'end' })
+        const norm = humanizeAgentText(t).replace(/\s+/g, '')
+        const dup = turn.steps.some((s) => {
+          if (s.kind !== 'progress' && s.kind !== 'thinking') return false
+          return humanizeAgentText(s.content || s.narrative).replace(/\s+/g, '') === norm
+        })
+        if (!dup) {
+          openStep(turn, 'progress', { content: t, narrative: t, phase: 'end' })
+        }
       }
       turn.steps = turn.steps.filter((s) => s.kind !== 'reply')
       turn.reply = ''

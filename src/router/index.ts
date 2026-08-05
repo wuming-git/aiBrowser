@@ -19,6 +19,8 @@ const router = createRouter({
         { path: 'profiles/new', component: () => import('@/views/ProfileEditView.vue') },
         { path: 'profiles/:id', component: () => import('@/views/ProfileEditView.vue') },
         { path: 'schedules', component: ScheduleJobsView },
+        { path: 'skills', component: () => import('@/views/SkillsView.vue') },
+        { path: 'tools', component: () => import('@/views/ToolsView.vue') },
         { path: 'agent', redirect: '/profiles' }
       ]
     }

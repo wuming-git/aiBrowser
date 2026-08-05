@@ -232,7 +232,44 @@ export const agentApi = {
     >,
   desktopStatus: () =>
     http.get('/api/desktop/status') as Promise<ApiR<{ online: boolean; devices: number }>>,
-  manifest: () => http.get('/api/tools/manifest') as Promise<ApiR<unknown[]>>
+  manifest: () => http.get('/api/tools/manifest') as Promise<ApiR<ToolManifestItem[]>>
+}
+
+export type ToolManifestItem = {
+  name: string
+  description: string
+  location: 'server' | 'desktop'
+}
+
+export type UserSkillSummary = {
+  name: string
+  description: string
+  layer: string
+  tools: string[]
+  source: 'system' | 'override' | 'custom'
+  canReset: boolean
+  canDelete: boolean
+  updatedAt?: string | null
+}
+
+export type UserSkillDetail = UserSkillSummary & {
+  content: string
+  systemContent?: string | null
+}
+
+export const skillsApi = {
+  list: () => http.get('/api/skills') as Promise<ApiR<UserSkillSummary[]>>,
+  get: (name: string) => http.get(`/api/skills/${encodeURIComponent(name)}`) as Promise<ApiR<UserSkillDetail>>,
+  template: (name = 'my-skill') =>
+    http.get('/api/skills/template', { params: { name } }) as Promise<ApiR<{ content: string }>>,
+  create: (payload: { name: string; content: string }) =>
+    http.post('/api/skills', payload) as Promise<ApiR<UserSkillDetail>>,
+  save: (name: string, content: string) =>
+    http.put(`/api/skills/${encodeURIComponent(name)}`, { content }) as Promise<ApiR<UserSkillDetail>>,
+  remove: (name: string) =>
+    http.delete(`/api/skills/${encodeURIComponent(name)}`) as Promise<
+      ApiR<{ deleted?: boolean; reset?: boolean; name: string }>
+    >
 }
 
 export default http

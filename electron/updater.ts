@@ -111,8 +111,14 @@ export function setupAutoUpdater() {
   autoUpdater.on('error', (err) => {
     checking = false
     downloading = false
-    const message = err?.message || String(err)
-    writeUtf8Line(process.stderr, `[updater] error ${message}`)
+    const raw = err?.message || String(err)
+    writeUtf8Line(process.stderr, `[updater] error ${raw}`)
+    // 更新源未部署 latest.yml 时会 404；不当成致命错误刷屏
+    if (/404|Cannot find channel|latest\.yml/i.test(raw)) {
+      send({ type: 'not-available', version: getAppVersion() })
+      return
+    }
+    const message = raw.length > 160 ? `${raw.slice(0, 160)}…` : raw
     send({ type: 'error', message })
   })
 }

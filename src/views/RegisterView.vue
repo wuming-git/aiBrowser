@@ -72,7 +72,7 @@ async function onSubmit() {
       email: email.value,
       password: password.value
     })
-    auth.setSession(res.data.token, res.data.email)
+    auth.setSession(res.data.token, res.data.email, res.data.userId)
     ElMessage.success('注册成功')
     router.push('/profiles')
   } catch (e: any) {
